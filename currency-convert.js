@@ -7,10 +7,19 @@ const axios = require('axios');
 const url = 'http://data.fixer.io/api/latest?access_key=abf05bf6065bd7fd6eaec2406fb9df2f';
 
 const getExchangeRate = async (from, to) => {
-    const response = await axios.get(url);
-    const euro = 1 / response.data.rates[from];
-    const rate = euro * response.data.rates[to];
-    return rate;
+    try {
+        const response = await axios.get(url);
+        const euro = 1 / response.data.rates[from];
+        const rate = euro * response.data.rates[to];
+
+        if (isNaN(rate)) {
+            throw new Error()
+        }
+
+        return rate;
+    } catch (e) {
+        throw new Error(`Unable to get exchange rate for ${from} to ${to}.`)
+    }
 
 };
 
@@ -41,4 +50,16 @@ const convertCurrency = async (from, to, amount) => {
 
 convertCurrency('USD', 'CAD', 20).then((money) => {
     console.log(money);
+}).catch((e) => {
+    console.log(e.message);
 })
+
+// const doWork = async () => {
+//     return mynumber;
+// }
+
+// doWork().then((data) => {
+//     console.log(data);
+// }).catch((e) => {
+//     console.log('Something went wrong');
+// })
