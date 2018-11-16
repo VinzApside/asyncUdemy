@@ -14,19 +14,31 @@ const getExchangeRate = async (from, to) => {
 
 };
 
-const getCountries = (currencyCode) => {
-    return axios.get(`https://restcountries.eu/rest/v2/currency/${currencyCode}`).then((response) => {
-        return response.data.map((country) => { return country.name })
-    })
 
+const getCountries = async (currencyCode) => {
+    const response = await axios.get(`https://restcountries.eu/rest/v2/currency/${currencyCode}`);
+    return response.data.map((country) => { return country.name })
+}
+
+const convertCurrency = async (from, to, amount) => {
+    const getRate = await getExchangeRate(from, to);
+    const exchange = (amount * getRate).toFixed(2);
+    const countrys = await getCountries(to);
+    const countryList = countrys.join(', ');
+
+    const phrase = `${amount} ${from} is worth ${exchange} ${to}. You can spend these in the following countries : ${countryList}.`
+    return phrase;
 }
 
 
+// getExchangeRate('USD', 'CAD').then((rate) => {
+//     console.log(rate);
+// })
 
-getExchangeRate('USD', 'CAD').then((rate) => {
-    console.log(rate);
-})
+// getCountries('EUR').then((countries) => {
+//     console.log(countries);
+// })
 
-getCountries('EUR').then((countries) => {
-    console.log(countries);
+convertCurrency('USD', 'CAD', 20).then((money) => {
+    console.log(money);
 })
