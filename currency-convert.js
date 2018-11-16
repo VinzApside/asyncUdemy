@@ -25,8 +25,15 @@ const getExchangeRate = async (from, to) => {
 
 
 const getCountries = async (currencyCode) => {
-    const response = await axios.get(`https://restcountries.eu/rest/v2/currency/${currencyCode}`);
-    return response.data.map((country) => { return country.name })
+    try {
+        const response = await axios.get(`https://restcountries.eu/rest/v2/currency/${currencyCode}`);
+        return response.data.map((country) => { return country.name })
+
+    } catch (e) {
+        throw new Error(`Unable to get countries that use ${currencyCode}`)
+    }
+
+
 }
 
 const convertCurrency = async (from, to, amount) => {
